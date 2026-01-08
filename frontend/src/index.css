@@ -1,0 +1,265 @@
+body {
+  background-color: #000;
+  color: white;
+
+  margin: 0;
+  min-height: 100vh;
+  padding-top: 70px;
+
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 👇 GRID LAYER */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background-image: url("./assets/grid.png");
+  background-repeat: repeat;
+  background-size: auto;
+
+  filter: invert(1);
+  opacity: 0.12;
+
+  pointer-events: none;
+  z-index: 0;   /* 🔥 FIX */
+}
+
+/* 👇 GLOW OVER GRID */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top,
+    rgba(0, 194, 209, 0.08),
+    transparent 60%
+  );
+
+  pointer-events: none;
+  z-index: 1;   /* 🔥 FIX */
+}
+
+
+
+/* .hero-section {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0b0b0b, #000);
+} */
+
+.hero-section {
+  min-height: 100vh;
+  position: relative;
+  background: transparent;
+}
+
+/* HERO DARK OVERLAY */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top,
+    rgba(0, 0, 0, 0.65),
+    rgba(0, 0, 0, 0.9)
+  );
+
+  z-index: 1; /* 👈 grid ke upar */
+}
+
+/* HERO CONTENT */
+.hero-section .container {
+  position: relative;
+  z-index: 2; /* 👈 sabse upar */
+}
+
+
+
+.section-dark {
+  padding: 100px 0;
+  background-color: #000;
+}
+
+.feature-card {
+  background: #050505;
+  border: 1px solid #1a1a1a;
+  border-radius: 16px;
+}
+
+.step-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-weight: bold;
+}
+
+.trusted-box {
+  background: #050505;
+  border-radius: 20px;
+}
+
+.text-purple {
+  color: #9b5cff;
+}
+
+.cta-section {
+  padding: 120px 0;
+  background-color: #000;
+}
+
+.cta-icon {
+  font-size: 2.5rem;
+  color: #00c2d1;
+}
+
+.navbar {
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.signup-section {
+  min-height: 100vh;
+  background-color: #000;
+}
+
+.signup-box {
+  width: 100%;
+  max-width: 420px;
+  background: #050505;
+  border-radius: 16px;
+  border: 1px solid #1a1a1a;
+}
+
+.signup-icon {
+  font-size: 2.5rem;
+  color: #00c2d1;
+}
+
+.dark-input {
+  background-color: #0b0b0b;
+  border: 1px solid #1a1a1a;
+  color: #fff;
+}
+
+.dark-input::placeholder {
+  color: #777;
+}
+
+.dark-input:focus {
+  background-color: #0b0b0b;
+  color: #fff;
+  border-color: #00c2d1;
+  box-shadow: none;
+}
+
+.login-section {
+  min-height: 100vh;
+  background-color: #000;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: #050505;
+  border-radius: 16px;
+  border: 1px solid #1a1a1a;
+}
+
+.login-icon {
+  font-size: 2.5rem;
+  color: #00c2d1;
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: #050505;
+  border-right: 1px solid #1a1a1a;
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+}
+
+.sidebar-link {
+  display: block;
+  color: #aaa;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.sidebar-link:hover {
+  background: #0b0b0b;
+  color: #00c2d1;
+}
+
+.sidebar-link.active {
+  background: #0b0b0b;
+  color: #00c2d1;
+}
+
+.dashboard-content {
+  margin-left: 240px;
+  padding: 40px;
+  width: 100%;
+}
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #050505;
+  border-right: 1px solid #1a1a1a;
+}
+
+.active-link {
+  background: #0b0b0b;
+  color: #00c2d1 !important;
+  font-weight: 600;
+  border-left: 4px solid #00c2d1;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00c2d1, #9b5cff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: black;
+  font-size: 1.2rem;
+}
+
+.alert-success {
+  background: rgba(25, 135, 84, 0.15);
+  border-color: #198754;
+  color: #9fffd8;
+}
+
+.alert-warning {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: #ffc107;
+  color: #ffe8a1;
+}
+
+.alert-danger {
+  background: rgba(220, 53, 69, 0.15);
+  border-color: #dc3545;
+  color: #ffb3bb;
+}
+
