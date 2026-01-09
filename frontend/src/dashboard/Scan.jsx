@@ -2,62 +2,66 @@ import { useState } from "react";
 import { useScan } from "../context/ScanContext";
 import jsPDF from "jspdf";
 
-function detectType(input) {
-  if (/https?:\/\//i.test(input)) return "URL";
-  if (/^\+?\d{10,}$/i.test(input)) return "Phone";
-  if (/@/.test(input)) return "Email";
-  return "Text / Message";
-}
-
 function Scan() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { addScan } = useScan();
 
-  const handleScan = () => {
+  const handleScan = async () => {
     if (!input.trim()) return;
 
     setLoading(true);
     setResult(null);
+    setError("");
 
-    setTimeout(() => {
-      const confidence = Math.floor(Math.random() * 40) + 60;
-      const type = detectType(input);
+    try {
+      const res = await fetch("http://localhost:5000/api/scan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ input }),
+      });
 
-      let level, color, message;
+      const contentType = res.headers.get("content-type");
 
-      if (confidence > 85) {
-        level = "High Risk";
-        color = "danger";
-        message = "Very likely a scam.";
-      } else if (confidence > 70) {
-        level = "Medium Risk";
-        color = "warning";
-        message = "Suspicious content detected.";
-      } else {
-        level = "Low Risk";
-        color = "success";
-        message = "No strong scam indicators.";
+      // ❌ Backend HTML ya kuch aur bhej raha hai
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          "Server error: JSON response expected (check backend / auth)"
+        );
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Scan failed");
       }
 
       const scanResult = {
         id: Date.now(),
         input,
-        type,
-        level,
-        confidence,
-        color,
+        type: data.type,
+        level: data.level,
+        confidence: data.confidence,
+        color: data.color,
+        message: data.message,
         time: new Date().toLocaleString(),
       };
 
       setResult(scanResult);
       addScan(scanResult);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
-  // ✅ PDF FUNCTION INSIDE COMPONENT
+  /* ===== PDF EXPORT ===== */
   const downloadPDF = () => {
     if (!result) return;
 
@@ -92,6 +96,8 @@ function Scan() {
         onChange={(e) => setInput(e.target.value)}
       />
 
+      {error && <p className="text-danger mt-2">{error}</p>}
+
       <button
         className="btn btn-info mt-3"
         onClick={handleScan}
@@ -103,11 +109,14 @@ function Scan() {
       {result && (
         <div className={`alert alert-${result.color} mt-4`}>
           <h5 className="fw-bold">{result.level}</h5>
-          <p>Type: <strong>{result.type}</strong></p>
-          <p>Confidence: <strong>{result.confidence}%</strong></p>
+          <p>
+            Type: <strong>{result.type}</strong>
+          </p>
+          <p>
+            Confidence: <strong>{result.confidence}%</strong>
+          </p>
           <p className="mb-0">{result.message}</p>
 
-          {/* ✅ PDF BUTTON INSIDE JSX */}
           <button
             className="btn btn-outline-light mt-3"
             onClick={downloadPDF}

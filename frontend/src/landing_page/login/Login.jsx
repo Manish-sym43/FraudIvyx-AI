@@ -7,25 +7,31 @@ function Login() {
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    // 🔐 Fake user data (abhi backend nahi hai)
-    const userData = {
-      name: email.split("@")[0], // email se naam bana rahe
-      email: email,
-    };
-
-    login(userData);           // ✅ DATA PASS KIYA
-    navigate("/dashboard");
+    try {
+      await login({ email, password });
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section className="login-section d-flex align-items-center justify-content-center">
       <div className="login-box text-light p-4">
 
-        <h3 className="text-center fw-bold">Welcome Back</h3>
+        {/* 🔥 Correct heading */}
+        <h3 className="text-center fw-bold">Login to your account</h3>
 
         <form onSubmit={handleLogin}>
           <input
@@ -41,11 +47,28 @@ function Login() {
             type="password"
             className="form-control dark-input mb-3"
             placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
 
-          <button className="btn btn-info w-100">Sign In</button>
+          {error && (
+            <p className="text-danger text-center mb-2">{error}</p>
+          )}
+
+          {/* 🔥 Correct button label */}
+          <button className="btn btn-info w-100" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
+
+        {/* 🔥 Signup link only as secondary option */}
+        <p className="text-center mt-3 text-secondary">
+          Don’t have an account?{" "}
+          <Link to="/get_started" className="text-info">
+            Create one
+          </Link>
+        </p>
       </div>
     </section>
   );

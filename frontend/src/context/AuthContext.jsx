@@ -1,30 +1,65 @@
 import { createContext, useContext, useState } from "react";
+import axios from "axios";
 
 const AuthContext = createContext();
+
+const API = axios.create({
+  baseURL: "http://localhost:5000/api",
+});
 
 export const AuthProvider = ({ children }) => {
   /* ================= AUTH STATE ================= */
   const [isAuth, setIsAuth] = useState(
-    localStorage.getItem("isAuth") === "true"
+    Boolean(localStorage.getItem("token"))
   );
 
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null
   );
 
+  /* ================= SIGNUP ================= */
+  const signup = async (data) => {
+    const res = await API.post("/auth/signup", data);
+    return res.data;
+  };
+
   /* ================= LOGIN ================= */
-  const login = (userData) => {
-    const finalUser = {
-      name: userData.name,
-      email: userData.email,
-      role: userData.role || "user", // ✅ default role
-    };
+  const login = async (data) => {
+    const res = await API.post("/auth/login", data);
+
+    const { token, user } = res.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
 
     setIsAuth(true);
-    setUser(finalUser);
+    setUser(user);
 
-    localStorage.setItem("isAuth", "true");
-    localStorage.setItem("user", JSON.stringify(finalUser));
+    return res.data;
+  };
+
+  /* ================= UPDATE PROFILE ================= */
+  const updateProfile = async (updatedData) => {
+    const token = localStorage.getItem("token");
+
+    const res = await API.put(
+      "/user/profile",
+      {
+        name: updatedData.name,
+        email: updatedData.email,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // 🔥 update context + localStorage
+    setUser(res.data.user);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    return res.data;
   };
 
   /* ================= LOGOUT ================= */
@@ -32,50 +67,19 @@ export const AuthProvider = ({ children }) => {
     setIsAuth(false);
     setUser(null);
 
-    localStorage.removeItem("isAuth");
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("password");
   };
 
-  /* ================= PROFILE UPDATE ================= */
-  const updateProfile = (updatedUser) => {
-    const updated = {
-      ...user,
-      name: updatedUser.name,
-      email: updatedUser.email,
-    };
-
-    setUser(updated);
-    localStorage.setItem("user", JSON.stringify(updated));
-  };
-
-  /* ================= PASSWORD ================= */
-  const defaultPassword = "123456";
-  const [password, setPassword] = useState(
-    localStorage.getItem("password") || defaultPassword
-  );
-
-  const changePassword = (current, newPass) => {
-    if (current !== password) {
-      return { success: false, message: "Current password is incorrect" };
-    }
-
-    setPassword(newPass);
-    localStorage.setItem("password", newPass);
-
-    return { success: true, message: "Password updated successfully" };
-  };
-
-  /* ================= PROVIDER ================= */
   return (
     <AuthContext.Provider
       value={{
         isAuth,
         user,
+        signup,
         login,
+        updateProfile, // 🔥 NOW REAL
         logout,
-        updateProfile,
-        changePassword,
       }}
     >
       {children}
