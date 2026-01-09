@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-/* ================= UPDATE PROFILE ================= */
+/*UPDATE PROFILE*/
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id; // from auth middleware

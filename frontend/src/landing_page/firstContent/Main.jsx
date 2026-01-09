@@ -15,7 +15,7 @@ function Main() {
         </p>
 
         <div className="mt-4">
-          {/* 👇 Signup redirect */}
+          {/*Signup redirect */}
           <Link to="/get_started">
             <button className="btn btn-info px-4 py-2 me-3 fw-semibold">
               Get Started Free

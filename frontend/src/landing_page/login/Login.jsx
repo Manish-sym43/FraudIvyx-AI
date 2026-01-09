@@ -30,7 +30,7 @@ function Login() {
     <section className="login-section d-flex align-items-center justify-content-center">
       <div className="login-box text-light p-4">
 
-        {/* 🔥 Correct heading */}
+        {/*Correct heading */}
         <h3 className="text-center fw-bold">Login to your account</h3>
 
         <form onSubmit={handleLogin}>
@@ -56,13 +56,13 @@ function Login() {
             <p className="text-danger text-center mb-2">{error}</p>
           )}
 
-          {/* 🔥 Correct button label */}
+          {/*Correct button label */}
           <button className="btn btn-info w-100" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        {/* 🔥 Signup link only as secondary option */}
+        {/*Signup link only as secondary option */}
         <p className="text-center mt-3 text-secondary">
           Don’t have an account?{" "}
           <Link to="/get_started" className="text-info">

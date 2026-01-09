@@ -2,7 +2,7 @@ function Hero() {
   return (
     <section className="about-section text-light mt-5 py-4">
       <div className="container">
-        {/* ===== Header ===== */}
+        {/*Header*/}
         <div className="text-center mb-5">
           <div className="about-icon mb-2">🛡️</div>
           <h2 className="fw-bold">
@@ -15,7 +15,7 @@ function Hero() {
           </p>
         </div>
 
-        {/* ===== Our Mission ===== */}
+        {/*Our Mission*/}
         <div className="about-card p-5 mb-5">
           <h4 className="fw-bold mb-3">Our Mission</h4>
           <p className="text-secondary">
@@ -31,7 +31,7 @@ function Hero() {
           </p>
         </div>
 
-        {/* ===== Why Choose ===== */}
+        {/*Why Choose*/}
         <h3 className="text-center fw-bold mb-4">Why Choose ScamShield AI?</h3>
 
         <div className="row mb-5">
@@ -73,7 +73,7 @@ function Hero() {
           ))}
         </div>
 
-        {/* ===== How It Works ===== */}
+        {/*How It Works*/}
         <div className="about-card p-5">
           <h4 className="fw-bold mb-4">How It Works</h4>
 

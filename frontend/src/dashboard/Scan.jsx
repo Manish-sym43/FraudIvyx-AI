@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useScan } from "../context/ScanContext";
 import jsPDF from "jspdf";
 
 function Scan() {
@@ -7,7 +6,6 @@ function Scan() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { addScan } = useScan();
 
   const handleScan = async () => {
     if (!input.trim()) return;
@@ -27,33 +25,23 @@ function Scan() {
       });
 
       const contentType = res.headers.get("content-type");
-
-      // ❌ Backend HTML ya kuch aur bhej raha hai
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error(
-          "Server error: JSON response expected (check backend / auth)"
-        );
+        throw new Error("Server error. Please login again.");
       }
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Scan failed");
 
-      if (!res.ok) {
-        throw new Error(data.message || "Scan failed");
-      }
-
-      const scanResult = {
-        id: Date.now(),
+      setResult({
         input,
         type: data.type,
         level: data.level,
         confidence: data.confidence,
         color: data.color,
         message: data.message,
+        reasons: data.reasons || [],
         time: new Date().toLocaleString(),
-      };
-
-      setResult(scanResult);
-      addScan(scanResult);
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,8 +63,10 @@ function Scan() {
     doc.text(`Confidence: ${result.confidence}%`, 20, 60);
     doc.text(`Time: ${result.time}`, 20, 70);
 
-    doc.text("Scanned Content:", 20, 90);
-    doc.text(result.input.substring(0, 300), 20, 100);
+    doc.text("Reasons:", 20, 90);
+    result.reasons.forEach((r, i) => {
+      doc.text(`- ${r}`, 20, 100 + i * 10);
+    });
 
     doc.save("scam-report.pdf");
   };
@@ -107,18 +97,46 @@ function Scan() {
       </button>
 
       {result && (
-        <div className={`alert alert-${result.color} mt-4`}>
-          <h5 className="fw-bold">{result.level}</h5>
-          <p>
-            Type: <strong>{result.type}</strong>
+        <div className="mt-4 p-4 rounded bg-dark border">
+          {/* Risk Badge */}
+          <span
+            className={`badge bg-${result.color} mb-2`}
+            style={{ fontSize: "14px" }}
+          >
+            {result.level}
+          </span>
+
+          <p className="mt-2">
+            <strong>Type:</strong> {result.type}
           </p>
-          <p>
-            Confidence: <strong>{result.confidence}%</strong>
+
+          {/* Confidence Meter */}
+          <p className="mb-1">
+            <strong>Confidence:</strong> {result.confidence}%
           </p>
-          <p className="mb-0">{result.message}</p>
+          <div className="progress mb-3" style={{ height: "8px" }}>
+            <div
+              className={`progress-bar bg-${result.color}`}
+              style={{ width: `${result.confidence}%` }}
+            />
+          </div>
+
+          <p>{result.message}</p>
+
+          {/* Explainable AI */}
+          {result.reasons.length > 0 && (
+            <>
+              <h6 className="mt-3 fw-bold">Why flagged?</h6>
+              <ul className="text-secondary">
+                {result.reasons.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            </>
+          )}
 
           <button
-            className="btn btn-outline-light mt-3"
+            className="btn btn-outline-info mt-3"
             onClick={downloadPDF}
           >
             Download Report (PDF)

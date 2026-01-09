@@ -12,7 +12,7 @@ function Footer() {
           Join thousands protecting themselves from online scams
         </p>
 
-        {/* 👇 Signup Redirect */}
+        {/* Signup Redirect */}
         <Link to="/get_started">
           <button className="btn btn-info px-5 py-2 mt-4 fw-semibold">
             Start Free Protection

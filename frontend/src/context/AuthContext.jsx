@@ -8,7 +8,7 @@ const API = axios.create({
 });
 
 export const AuthProvider = ({ children }) => {
-  /* ================= AUTH STATE ================= */
+  /*AUTH STATE*/
   const [isAuth, setIsAuth] = useState(
     Boolean(localStorage.getItem("token"))
   );
@@ -17,13 +17,13 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user")) || null
   );
 
-  /* ================= SIGNUP ================= */
+  /*SIGNUP*/
   const signup = async (data) => {
     const res = await API.post("/auth/signup", data);
     return res.data;
   };
 
-  /* ================= LOGIN ================= */
+  /*LOGIN*/
   const login = async (data) => {
     const res = await API.post("/auth/login", data);
 
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
-  /* ================= UPDATE PROFILE ================= */
+  /*UPDATE PROFILE*/
   const updateProfile = async (updatedData) => {
     const token = localStorage.getItem("token");
 
@@ -55,14 +55,14 @@ export const AuthProvider = ({ children }) => {
       }
     );
 
-    // 🔥 update context + localStorage
+    //update context + localStorage
     setUser(res.data.user);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
     return res.data;
   };
 
-  /* ================= LOGOUT ================= */
+  /*LOGOUT*/
   const logout = () => {
     setIsAuth(false);
     setUser(null);
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
         user,
         signup,
         login,
-        updateProfile, // 🔥 NOW REAL
+        updateProfile, //NOW REAL
         logout,
       }}
     >

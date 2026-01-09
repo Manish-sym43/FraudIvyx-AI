@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-/* ================= SIGNUP ================= */
+/*SIGNUP*/
 export const signup = async (req, res) => {
   try {
     console.log("SIGNUP HIT", req.body);
@@ -22,7 +22,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,                     // ✅ name saved
+      name,                     //name saved
       email,
       password: hashedPassword,
     });
@@ -42,7 +42,7 @@ export const signup = async (req, res) => {
   }
 };
 
-/* ================= LOGIN ================= */
+/*LOGIN*/
 export const login = async (req, res) => {
   try {
     console.log("LOGIN HIT", req.body);

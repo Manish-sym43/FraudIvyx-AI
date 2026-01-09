@@ -1,7 +1,23 @@
+import { useAuth } from "../context/AuthContext";
+
 function Dashboard() {
+  const { user } = useAuth();
+
+  //Time-based greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
   return (
     <div className="container text-light py-5">
-      <h2 className="fw-bold">Welcome, User 👋</h2>
+      <h2 className="fw-bold">
+        {getGreeting()}, {user?.name || user?.email || "User"} 👋
+      </h2>
+
       <p className="text-secondary">
         Analyze suspicious content and stay protected.
       </p>

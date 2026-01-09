@@ -15,7 +15,7 @@ function Sidebar() {
 
   return (
     <div className="sidebar text-light p-3">
-      {/* ===== USER INFO ===== */}
+      {/* USER INFO */}
       <div className="d-flex align-items-center gap-3 mb-4">
         <div className="avatar-circle">{user?.name?.charAt(0)}</div>
         <div>
@@ -24,7 +24,7 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ===== NAV LINKS ===== */}
+      {/*NAV LINKS*/}
       <NavLink to="/report" className={linkClass}>
         Report Scam
       </NavLink>
@@ -60,7 +60,7 @@ function Sidebar() {
         </li>
       </ul>
 
-      {/* ===== LOGOUT ===== */}
+      {/*LOGOUT*/}
       <button
         onClick={handleLogout}
         className="btn btn-outline-danger mt-4 w-100"

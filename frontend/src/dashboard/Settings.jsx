@@ -41,7 +41,7 @@ function Settings() {
     <div className="container text-light py-5">
       <h3 className="fw-bold mb-4">Settings</h3>
 
-      {/* ===== Security ===== */}
+      {/*Security*/}
       <div className="signup-box p-4 mb-4">
         <h5 className="fw-semibold mb-3">Change Password</h5>
 
