@@ -21,7 +21,7 @@ function Contact() {
               <div className="fs-2 text-info mb-2">📧</div>
               <h5>Email Us</h5>
               <p className="text-secondary">For support and inquiries</p>
-              <p className="text-info">support@scamshield.ai</p>
+              <p className="text-info">support@fraudivyx.ai</p>
             </div>
           </div>
 
@@ -29,8 +29,8 @@ function Contact() {
             <div className="contact-card p-4 h-100">
               <div className="fs-2 text-purple mb-2">💬</div>
               <h5>Feedback</h5>
-              <p className="text-secondary">Help us improve ScamShield</p>
-              <p className="text-info">feedback@scamshield.ai</p>
+              <p className="text-secondary">Help us improve fraudivyx</p>
+              <p className="text-info">feedback@fraudivyx.ai</p>
             </div>
           </div>
         </div>

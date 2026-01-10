@@ -6,7 +6,7 @@ function Hero() {
         <div className="text-center mb-5">
           <div className="about-icon mb-2">🛡️</div>
           <h2 className="fw-bold">
-            About <span className="text-info">ScamShield</span>{" "}
+            About <span className="text-info">FraudIvyx</span>{" "}
             <span className="text-purple">AI</span>
           </h2>
           <p className="text-secondary">
@@ -19,7 +19,7 @@ function Hero() {
         <div className="about-card p-5 mb-5">
           <h4 className="fw-bold mb-3">Our Mission</h4>
           <p className="text-secondary">
-            In an era where cyber threats are evolving rapidly, ScamShield AI
+            In an era where cyber threats are evolving rapidly, FraudIvyx AI
             provides real-time protection using advanced AI technology. Our
             mission is to empower individuals and businesses to identify and
             avoid scams before they cause harm.
@@ -32,7 +32,7 @@ function Hero() {
         </div>
 
         {/*Why Choose*/}
-        <h3 className="text-center fw-bold mb-4">Why Choose ScamShield AI?</h3>
+        <h3 className="text-center fw-bold mb-4">Why Choose FraudIvyx AI?</h3>
 
         <div className="row mb-5">
           {[
