@@ -16,16 +16,10 @@ const app = express();
 /*MIDDLEWARE*/
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://fraud-ivyx-ai.vercel.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: "*",
+    
   })
 );
-
-app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
