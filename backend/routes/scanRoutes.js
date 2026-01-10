@@ -28,7 +28,7 @@ router.post("/", protect, async (req, res) => {
 
     //Call Python AI service
     const aiResponse = await axios.post(
-      "http://127.0.0.1:8000/predict",
+      `${process.env.ML_URL}/predict`,
       { input }
     );
 
