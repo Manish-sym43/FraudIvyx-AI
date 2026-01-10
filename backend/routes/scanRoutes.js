@@ -28,7 +28,7 @@ router.post("/", protect, async (req, res) => {
 
     //Call Python AI service
     const aiResponse = await axios.post(
-      `${process.env.ML_URL}/predict`,
+      "https://fraudivyx-ml-wtei.onrender.com/predict",
       { input }
     );
 
