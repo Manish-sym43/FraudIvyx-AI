@@ -16,7 +16,7 @@ const app = express();
 /*MIDDLEWARE*/
 app.use(
   cors({
-    origin: "http://localhost:5173", // Vite frontend
+    origin: "*",
     credentials: true,
   })
 );
