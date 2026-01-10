@@ -4,7 +4,7 @@ import axios from "axios";
 const AuthContext = createContext();
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://fraudivyx-backend.onrender.com/api",
 });
 
 export const AuthProvider = ({ children }) => {

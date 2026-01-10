@@ -11,7 +11,7 @@ function History() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:5000/api/scan/history",
+          "https://fraudivyx-backend.onrender.com/api/scan/history",
           {
             headers: {
               Authorization: `Bearer ${token}`,
