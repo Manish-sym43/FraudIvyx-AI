@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import re
 
 app = Flask(__name__)
+CORS(app)
 
-#Lightweight AI-like heuristic engine
+# Lightweight AI-like heuristic engine
 SCAM_KEYWORDS = [
     "login", "verify", "bank", "account",
     "free", "gift", "click", "urgent",
@@ -12,10 +14,11 @@ SCAM_KEYWORDS = [
 
 SUSPICIOUS_DOMAINS = [".xyz", ".top", ".tk", ".ml", ".ga"]
 
+
 def analyze_input(text):
     text = text.lower()
     score = 0
-    reasons = []  # NEW: explainable reasons
+    reasons = []
 
     # scam keywords
     for word in SCAM_KEYWORDS:
@@ -39,18 +42,32 @@ def analyze_input(text):
         return "Safe", max(90 - score, 75), ["No suspicious patterns found"]
 
 
+@app.route("/", methods=["GET"])
+def home():
+    return "ML Scam Detection API is running"
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json
-    text = data.get("input", "")
+    try:
+        data = request.json
+        text = data.get("input", "")
 
-    result, confidence, reasons = analyze_input(text)
+        result, confidence, reasons = analyze_input(text)
 
-    return jsonify({
-        "result": result,
-        "confidence": confidence,
-        "reasons": reasons   #NEW FIELD
-    })
+        return jsonify({
+            "success": True,
+            "result": result,
+            "confidence": confidence,
+            "reasons": reasons
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+    app.run()
