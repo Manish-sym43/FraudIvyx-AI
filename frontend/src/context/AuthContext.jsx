@@ -16,7 +16,6 @@ API.interceptors.request.use((req) => {
 });
 
 export const AuthProvider = ({ children }) => {
-
   /* =================================================
      ⭐ FIX: Lazy initialize from localStorage
      This runs BEFORE first render (no logout flicker)
@@ -27,12 +26,14 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [isAuth, setIsAuth] = useState(() =>
-    Boolean(localStorage.getItem("token"))
+    Boolean(localStorage.getItem("token")),
   );
 
   /* ================= SIGNUP ================= */
   const signup = async (data) => {
     const res = await API.post("/auth/signup", data);
+    // ⭐ small delay for smooth transition
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     return res.data;
   };
 
@@ -47,6 +48,9 @@ export const AuthProvider = ({ children }) => {
 
     setUser(user);
     setIsAuth(true);
+
+    // ⭐ small delay for smooth transition
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
     return res.data;
   };

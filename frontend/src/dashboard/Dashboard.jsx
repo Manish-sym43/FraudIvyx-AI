@@ -1,7 +1,40 @@
 import { useAuth } from "../context/AuthContext";
+import { useState, useEffect } from "react";
 
 function Dashboard() {
   const { user } = useAuth();
+
+  /* ⭐ NEW: loading state */
+  const [loading, setLoading] = useState(true);
+
+  /* ⭐ NEW: smooth delay */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200); // 1.2 sec splash
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  /* ⭐ NEW: Loading Screen UI */
+  if (loading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "#0d1117",
+          color: "white",
+          flexDirection: "column",
+        }}
+      >
+        <div className="spinner-border text-info mb-3" />
+        <h5>Preparing your dashboard...</h5>
+      </div>
+    );
+  }
 
   //Time-based greeting
   const getGreeting = () => {
