@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -8,34 +8,27 @@ const API = axios.create({
   baseURL: "https://fraudivyx-backend.onrender.com/api",
 });
 
-/* ⭐ AUTO TOKEN ATTACH (no need to manually send headers anywhere) */
+/* ⭐ AUTO TOKEN ATTACH */
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;
 });
 
 export const AuthProvider = ({ children }) => {
-  /* ================= AUTH STATE ================= */
-
-  const [isAuth, setIsAuth] = useState(false);
-  const [user, setUser] = useState(null);
 
   /* =================================================
-     ⭐ MOST IMPORTANT FIX
-     Restore login on refresh / reload
+     ⭐ FIX: Lazy initialize from localStorage
+     This runs BEFORE first render (no logout flicker)
   ================================================= */
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
 
-    if (token && savedUser) {
-      setIsAuth(true);
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+  const [isAuth, setIsAuth] = useState(() =>
+    Boolean(localStorage.getItem("token"))
+  );
 
   /* ================= SIGNUP ================= */
   const signup = async (data) => {
@@ -52,18 +45,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
 
-    setIsAuth(true);
     setUser(user);
+    setIsAuth(true);
 
     return res.data;
   };
 
   /* ================= UPDATE PROFILE ================= */
   const updateProfile = async (updatedData) => {
-    const res = await API.put("/user/profile", {
-      name: updatedData.name,
-      email: updatedData.email,
-    });
+    const res = await API.put("/user/profile", updatedData);
 
     setUser(res.data.user);
     localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -76,8 +66,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    setIsAuth(false);
     setUser(null);
+    setIsAuth(false);
   };
 
   return (
