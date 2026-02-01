@@ -1,0 +1,12 @@
+username: fraudivyxai_db_user
+password: 3EUo14BP0AkrK7DA
+
+MONGOURI: mongodb+srv://fraudivyxai_db_user:3EUo14BP0AkrK7DA@cluster0.xqk8gx2.mongodb.net/?appName=Cluster0
+
+JWT_SECRET=Manish@553
+
+
+backend live link=  https://fraudivyx-backend.onrender.com
+
+
+ml ka live link=  https://fraudivyx-ml-wtei.onrender.com

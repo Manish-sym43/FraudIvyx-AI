@@ -41,6 +41,9 @@ def analyze_input(text):
     else:
         return "Safe", max(90 - score, 75), ["No suspicious patterns found"]
 
+@app.route("/ping")
+def ping():
+    return "ok"
 
 @app.route("/", methods=["GET"])
 def home():
@@ -50,7 +53,7 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        data = request.json
+        data = request.get_json(force=True, silent=True) or {}
         text = data.get("input", "")
 
         result, confidence, reasons = analyze_input(text)
