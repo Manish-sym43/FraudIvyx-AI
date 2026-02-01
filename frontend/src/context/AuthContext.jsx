@@ -1,29 +1,49 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
 
+/* ================= API INSTANCE ================= */
 const API = axios.create({
   baseURL: "https://fraudivyx-backend.onrender.com/api",
 });
 
+/* ⭐ AUTO TOKEN ATTACH (no need to manually send headers anywhere) */
+API.interceptors.request.use((req) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
+  }
+  return req;
+});
+
 export const AuthProvider = ({ children }) => {
-  /*AUTH STATE*/
-  const [isAuth, setIsAuth] = useState(
-    Boolean(localStorage.getItem("token"))
-  );
+  /* ================= AUTH STATE ================= */
 
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
-  );
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState(null);
 
-  /*SIGNUP*/
+  /* =================================================
+     ⭐ MOST IMPORTANT FIX
+     Restore login on refresh / reload
+  ================================================= */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+
+    if (token && savedUser) {
+      setIsAuth(true);
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  /* ================= SIGNUP ================= */
   const signup = async (data) => {
     const res = await API.post("/auth/signup", data);
     return res.data;
   };
 
-  /*LOGIN*/
+  /* ================= LOGIN ================= */
   const login = async (data) => {
     const res = await API.post("/auth/login", data);
 
@@ -38,37 +58,26 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
-  /*UPDATE PROFILE*/
+  /* ================= UPDATE PROFILE ================= */
   const updateProfile = async (updatedData) => {
-    const token = localStorage.getItem("token");
+    const res = await API.put("/user/profile", {
+      name: updatedData.name,
+      email: updatedData.email,
+    });
 
-    const res = await API.put(
-      "/user/profile",
-      {
-        name: updatedData.name,
-        email: updatedData.email,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    //update context + localStorage
     setUser(res.data.user);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
     return res.data;
   };
 
-  /*LOGOUT*/
+  /* ================= LOGOUT ================= */
   const logout = () => {
-    setIsAuth(false);
-    setUser(null);
-
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
+    setIsAuth(false);
+    setUser(null);
   };
 
   return (
@@ -78,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         user,
         signup,
         login,
-        updateProfile, //NOW REAL
+        updateProfile,
         logout,
       }}
     >
