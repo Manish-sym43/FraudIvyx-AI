@@ -41,9 +41,6 @@ def analyze_input(text):
     else:
         return "Safe", max(90 - score, 75), ["No suspicious patterns found"]
 
-@app.route("/ping")
-def ping():
-    return "ok"
 
 @app.route("/", methods=["GET"])
 def home():

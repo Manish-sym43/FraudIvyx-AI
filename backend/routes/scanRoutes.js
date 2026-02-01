@@ -29,13 +29,7 @@ router.post("/", protect, async (req, res) => {
     //Call Python AI service
     const aiResponse = await axios.post(
       `${process.env.ML_URL}/predict`,
-      { input },
-      {
-        timeout: 60000, // 60 sec
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
+      { input }
     );
 
     const { result, confidence, reasons } = aiResponse.data;
@@ -75,7 +69,7 @@ router.post("/", protect, async (req, res) => {
       reasons,
     });
   } catch (error) {
-    console.error("Scan error:", error.response?.data || error);
+    console.error("Scan error:", error.message);
     res.status(500).json({ message: "AI scan failed" });
   }
 });
@@ -87,8 +81,9 @@ router.post("/", protect, async (req, res) => {
  */
 router.get("/history", protect, async (req, res) => {
   try {
-    //FIX 2: req.userId use
-    const scans = await Scan.find({ user: req.userId }).sort({ createdAt: -1 });
+    //FIX 2: req.userId use 
+    const scans = await Scan.find({ user: req.userId })
+      .sort({ createdAt: -1 });
 
     res.status(200).json(scans);
   } catch (error) {

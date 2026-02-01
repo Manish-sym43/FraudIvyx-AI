@@ -15,7 +15,7 @@ function Scan() {
     setError("");
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/scan`, {
+      const res = await fetch("https://fraudivyx-backend.onrender.com/api/scan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
