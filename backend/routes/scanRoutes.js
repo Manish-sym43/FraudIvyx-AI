@@ -1,17 +1,68 @@
 import express from "express";
-import axios from "axios";
 import { protect } from "../middleware/authMiddleware.js";
 import Scan from "../models/Scan.js";
 
 const router = express.Router();
 
-/*TYPE DETECTION*/
+/* ================= TYPE DETECTION ================= */
 const detectType = (input) => {
   if (input.startsWith("http") || input.includes("www")) return "URL";
   if (input.includes("@")) return "Email";
   if (/^\+?\d{10,}$/.test(input)) return "Phone Number";
   return "Text / Message";
 };
+
+
+/* ================= SCAM DETECTOR (NO ML NEEDED) ================= */
+
+const SCAM_KEYWORDS = [
+  "login","verify","bank","account",
+  "free","gift","click","urgent",
+  "password","otp","reward","win"
+];
+
+const SUSPICIOUS_DOMAINS = [".xyz",".top",".tk",".ml",".ga"];
+
+const analyzeInput = (text) => {
+  text = text.toLowerCase();
+
+  let score = 0;
+  const reasons = [];
+
+  // keyword check
+  SCAM_KEYWORDS.forEach(word => {
+    if (text.includes(word)) {
+      score += 20;
+      reasons.push(`Contains suspicious keyword: '${word}'`);
+    }
+  });
+
+  // domain check
+  if (text.includes("http") || text.includes("www")) {
+    SUSPICIOUS_DOMAINS.forEach(domain => {
+      if (text.includes(domain)) {
+        score += 30;
+        reasons.push(`Suspicious domain detected: ${domain}`);
+      }
+    });
+  }
+
+  // final result
+  if (score >= 60) {
+    return { result: "Scam", confidence: 95, reasons };
+  }
+
+  if (score >= 30) {
+    return { result: "Suspicious", confidence: score, reasons };
+  }
+
+  return {
+    result: "Safe",
+    confidence: 90,
+    reasons: ["No suspicious patterns found"]
+  };
+};
+
 
 /**
  * @route   POST /api/scan
@@ -26,13 +77,8 @@ router.post("/", protect, async (req, res) => {
       return res.status(400).json({ message: "Input is required" });
     }
 
-    //Call Python AI service
-    const aiResponse = await axios.post(
-      `${process.env.ML_URL}/predict`,
-      { input }
-    );
-
-    const { result, confidence, reasons } = aiResponse.data;
+    /* ⭐ DIRECT ANALYSIS (NO ML CALL) */
+    const { result, confidence, reasons } = analyzeInput(input);
 
     const type = detectType(input);
 
@@ -43,14 +89,14 @@ router.post("/", protect, async (req, res) => {
     if (result === "Scam") {
       level = "High Risk";
       color = "danger";
-      message = "AI detected phishing / scam patterns";
-    } else if (result === "Suspicious") {
+      message = "Scam patterns detected";
+    } 
+    else if (result === "Suspicious") {
       level = "Medium Risk";
       color = "warning";
       message = "Some suspicious indicators found";
     }
 
-    //FIX 1: req.userId use karo
     await Scan.create({
       user: req.userId,
       input,
@@ -68,11 +114,13 @@ router.post("/", protect, async (req, res) => {
       message,
       reasons,
     });
+
   } catch (error) {
-    console.error("Scan error:", error.message);
-    res.status(500).json({ message: "AI scan failed" });
+    console.error("Scan error:", error);
+    res.status(500).json({ message: "Scan failed" });
   }
 });
+
 
 /**
  * @route   GET /api/scan/history
@@ -81,13 +129,12 @@ router.post("/", protect, async (req, res) => {
  */
 router.get("/history", protect, async (req, res) => {
   try {
-    //FIX 2: req.userId use 
     const scans = await Scan.find({ user: req.userId })
       .sort({ createdAt: -1 });
 
     res.status(200).json(scans);
   } catch (error) {
-    console.error("History fetch error:", error.message);
+    console.error("History fetch error:", error);
     res.status(500).json({ message: "Failed to fetch scan history" });
   }
 });
